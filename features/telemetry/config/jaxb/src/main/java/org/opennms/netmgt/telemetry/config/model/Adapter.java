@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,66 +40,102 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.google.common.base.MoreObjects;
+
 @XmlRootElement(name="adapter")
 @XmlAccessorType(XmlAccessType.NONE)
 public class Adapter {
     @XmlAttribute(name="name")
+    @XmlID
     private String name;
+
     @XmlAttribute(name="class-name")
     private String className;
+
+    @XmlAttribute(name="enabled")
+    private boolean enabled;
+
     @XmlElement(name="parameter")
     private List<Parameter> parameters = new ArrayList<>();
 
+    @XmlElement(name="package")
+    private List<Package> packages = new ArrayList<>();
+
     public String getName() {
-        return name;
+        return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
     public String getClassName() {
-        return className;
+        return this.className;
     }
 
-    public void setClassName(String className) {
+    public void setClassName(final String className) {
         this.className = className;
     }
 
-    public List<Parameter> getParameters() {
-        return parameters;
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
-    public void setParameters(List<Parameter> parameters) {
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public List<Parameter> getParameters() {
+        return this.parameters;
+    }
+
+    public void setParameters(final List<Parameter> parameters) {
         this.parameters = parameters;
     }
 
     public Map<String, String> getParameterMap() {
-        return parameters.stream().collect(
-                Collectors.toMap(Parameter::getKey, Parameter::getValue));
+        return parameters.stream()
+                .collect(Collectors.toMap(Parameter::getKey, Parameter::getValue));
+    }
+
+    public List<Package> getPackages() {
+        return this.packages;
+    }
+
+    public void setPackages(final List<Package> packages) {
+        this.packages = packages;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Adapter adapter = (Adapter) o;
-        return Objects.equals(name, adapter.name) &&
-                Objects.equals(className, adapter.className) &&
-                Objects.equals(parameters, adapter.parameters);
+        final Adapter that = (Adapter) o;
+        return Objects.equals(this.name, that.name) &&
+                Objects.equals(this.className, that.className) &&
+                Objects.equals(this.enabled, that.enabled) &&
+                Objects.equals(this.parameters, that.parameters) &&
+                Objects.equals(this.packages, that.packages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, className, parameters);
+        return Objects.hash(
+                this.name,
+                this.className,
+                this.enabled,
+                this.parameters,
+                this.packages);
     }
 
     @Override
     public String toString() {
-        return "Adapter{" +
-                "name='" + name + '\'' +
-                ", className='" + className + '\'' +
-                ", parameters=" + parameters +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("name", this.name)
+                .add("class-name", this.className)
+                .add("enabled", this.enabled)
+                .addValue(this.parameters)
+                .add("packages", this.packages)
+                .toString();
     }
 }

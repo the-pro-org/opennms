@@ -11,7 +11,7 @@
 
   <xs:element name="parameter" type="tns:parameter"/>
 
-  <xs:element name="protocol" type="tns:protocol"/>
+  <xs:element name="parser" type="tns:parser"/>
 
   <xs:element name="rrd" type="tns:rrd"/>
 
@@ -37,27 +37,23 @@
     <xs:attribute name="base-directory" type="xs:string"/>
   </xs:complexType>
 
-  <xs:complexType name="protocol">
+  <xs:complexType name="parser">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:listener"/>
-      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:adapter"/>
-      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:package"/>
+      <xs:element name="adapter" maxOccurs="unbounded" minOccurs="0" type="xs:IDREF"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string"/>
-    <xs:attribute name="description" type="xs:string"/>
+    <xs:attribute name="class-name" type="xs:string"/>
     <xs:attribute name="enabled" type="xs:boolean"/>
-    <xs:attribute name="num-threads" type="xs:int"/>
-    <xs:attribute name="batch-size" type="xs:int"/>
-    <xs:attribute name="batch-interval-ms" type="xs:int"/>
-    <xs:attribute name="queue-size" type="xs:int"/>
   </xs:complexType>
 
   <xs:complexType name="listener">
     <xs:sequence>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:parameter"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:parser"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="class-name" type="xs:string"/>
+    <xs:attribute name="enabled" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:complexType name="parameter">
@@ -69,14 +65,17 @@
   <xs:complexType name="adapter">
     <xs:sequence>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:parameter"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:package"/>
     </xs:sequence>
-    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="name" type="xs:ID"/>
     <xs:attribute name="class-name" type="xs:string"/>
+    <xs:attribute name="enabled" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:complexType name="telemetrydConfiguration">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:protocol"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:listener"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:adapter"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>

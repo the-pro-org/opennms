@@ -36,37 +36,54 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
 @XmlRootElement(name = "telemetryd-config")
 @XmlAccessorType(XmlAccessType.NONE)
 public class TelemetrydConfiguration {
-    @XmlElement(name="protocol")
-    private List<Protocol> protocols = new ArrayList<>();
+    @XmlElement(name="listener")
+    private List<Listener> listeners = new ArrayList<>();
 
-    public List<Protocol> getProtocols() {
-        return protocols;
+    @XmlElement(name="adapter")
+    private List<Adapter> adapters = new ArrayList<>();
+
+    public List<Listener> getListeners() {
+        return this.listeners;
     }
 
-    public void setProtocols(List<Protocol> protocols) {
-        this.protocols = protocols;
+    public void setListeners(final List<Listener> listeners) {
+        this.listeners = listeners;
+    }
+
+    public List<Adapter> getAdapters() {
+        return this.adapters;
+    }
+
+    public void setAdapters(final List<Adapter> adapters) {
+        this.adapters = adapters;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TelemetrydConfiguration that = (TelemetrydConfiguration) o;
-        return Objects.equals(protocols, that.protocols);
+
+        final TelemetrydConfiguration that = (TelemetrydConfiguration) o;
+
+        return Objects.equals(this.listeners, that.listeners) &&
+                Objects.equals(this.adapters, that.adapters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(protocols);
+        return Objects.hash(this.listeners,this.adapters);
     }
 
     @Override
     public String toString() {
-        return "TelemetrydConfiguration{" +
-                "protocols=" + protocols +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("listeners", this.listeners)
+                .add("adapters", this.adapters)
+                .toString();
     }
 }
