@@ -73,9 +73,9 @@
   </xs:complexType>
 
   <xs:complexType name="telemetrydConfiguration">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:listener"/>
-      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:adapter"/>
-    </xs:sequence>
+    <xs:choice maxOccurs="unbounded" minOccurs="0" >
+      <xs:element ref="tns:listener"/>
+      <xs:element ref="tns:adapter"/>
+    </xs:choice>
   </xs:complexType>
 </xs:schema>
