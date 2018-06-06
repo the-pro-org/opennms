@@ -31,33 +31,42 @@ package org.opennms.netmgt.telemetry.config.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.opennms.netmgt.telemetry.config.api.QueueDefinition;
 
 import com.google.common.base.MoreObjects;
 
-@XmlRootElement(name="parser")
+@XmlRootElement(name="queue")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Parser {
-
+public class QueueConfig implements QueueDefinition {
     @XmlAttribute(name="name")
+    @XmlID
     private String name;
 
-    @XmlAttribute(name="class-name")
-    private String className;
+    @XmlAttribute(name="num-threads")
+    private Integer numThreads;
 
-    @XmlAttribute(name="enabled")
-    private boolean enabled;
+    @XmlAttribute(name="batch-size")
+    private Integer batchSize;
+
+    @XmlAttribute(name="batch-interval-ms")
+    private Integer batchIntervalMs;
+
+    @XmlAttribute(name="queue-size")
+    private Integer queueSize;
 
     @XmlElement(name="adapter")
-    @XmlIDREF
-    private List<Adapter> adapters = new ArrayList<>();
+    private List<AdapterConfig> adapters = new ArrayList<>();
 
+    @Override
     public String getName() {
         return this.name;
     }
@@ -66,27 +75,47 @@ public class Parser {
         this.name = name;
     }
 
-    public String getClassName() {
-        return this.className;
+    @Override
+    public Optional<Integer> getNumThreads() {
+        return Optional.ofNullable(this.numThreads);
     }
 
-    public void setClassName(final String className) {
-        this.className = className;
+    public void setNumThreads(final Integer numThreads) {
+        this.numThreads = numThreads;
     }
 
-    public boolean isEnabled() {
-        return this.enabled;
+    @Override
+    public Optional<Integer> getBatchSize() {
+        return Optional.ofNullable(this.batchSize);
     }
 
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
+    public void setBatchSize(final Integer batchSize) {
+        this.batchSize = batchSize;
     }
 
-    public List<Adapter> getAdapters() {
+    @Override
+    public Optional<Integer> getBatchIntervalMs() {
+        return Optional.ofNullable(this.batchIntervalMs);
+    }
+
+    public void setBatchIntervalMs(final Integer batchIntervalMs) {
+        this.batchIntervalMs = batchIntervalMs;
+    }
+
+    @Override
+    public Optional<Integer> getQueueSize() {
+        return Optional.ofNullable(this.queueSize);
+    }
+
+    public void setQueueSize(final Integer queueSize) {
+        this.queueSize = queueSize;
+    }
+
+    public List<AdapterConfig> getAdapters() {
         return this.adapters;
     }
 
-    public void setAdapters(final List<Adapter> adapters) {
+    public void setAdapters(final List<AdapterConfig> adapters) {
         this.adapters = adapters;
     }
 
@@ -94,25 +123,35 @@ public class Parser {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Parser that = (Parser) o;
+        final QueueConfig that = (QueueConfig) o;
         return Objects.equals(this.name, that.name) &&
-                Objects.equals(this.className, that.className) &&
-                Objects.equals(this.enabled, that.enabled) &&
+                Objects.equals(this.numThreads, that.numThreads) &&
+                Objects.equals(this.batchSize, that.batchSize) &&
+                Objects.equals(this.batchIntervalMs, that.batchIntervalMs) &&
+                Objects.equals(this.queueSize, that.queueSize) &&
                 Objects.equals(this.adapters, that.adapters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.name, this.className, this.enabled, this.adapters);
+        return Objects.hash(
+                this.name,
+                this.numThreads,
+                this.batchSize,
+                this.batchIntervalMs,
+                this.queueSize,
+                this.adapters);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("name", this.name)
-                .add("class-name", this.className)
-                .add("enabled", this.enabled)
-                .add("adapters", this.adapters)
+                .add("num-threads", this.numThreads)
+                .add("batch-size", this.batchSize)
+                .add("batch-interval-ms", this.batchIntervalMs)
+                .add("queue-size", this.queueSize)
+                .addValue(this.adapters)
                 .toString();
     }
 }

@@ -28,13 +28,11 @@
 
 package org.opennms.features.telemetry.adapters.registry.api;
 
-import java.util.Map;
-
 import org.opennms.netmgt.telemetry.adapters.api.Adapter;
-import org.opennms.netmgt.telemetry.config.api.Protocol;
+import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
 
 public interface TelemetryAdapterRegistry {
 
-    Adapter getAdapter(String className, Protocol protocol, Map<String, String> properties);
+    Adapter getAdapter(final AdapterDefinition adapterConfig);
 
 }

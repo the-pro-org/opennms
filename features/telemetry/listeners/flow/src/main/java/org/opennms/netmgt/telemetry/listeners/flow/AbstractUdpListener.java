@@ -30,10 +30,12 @@ package org.opennms.netmgt.telemetry.listeners.flow;
 
 import java.net.InetSocketAddress;
 import java.time.Duration;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.opennms.core.ipc.sink.api.AsyncDispatcher;
 import org.opennms.netmgt.telemetry.listeners.api.Listener;
+import org.opennms.netmgt.telemetry.listeners.api.Parser;
 import org.opennms.netmgt.telemetry.listeners.api.TelemetryMessage;
 import org.opennms.netmgt.telemetry.listeners.flow.session.UdpSessionManager;
 import org.slf4j.Logger;
@@ -68,7 +70,7 @@ public abstract class AbstractUdpListener implements Listener {
 
     private Duration templateTimeout = Duration.ofMinutes(30);
 
-    private AsyncDispatcher<TelemetryMessage> dispatcher;
+    private Set<Parser> parsers;
 
     private EventLoopGroup bossGroup;
     private ChannelFuture socketFuture;
@@ -105,7 +107,8 @@ public abstract class AbstractUdpListener implements Listener {
                     protected void initChannel(final DatagramChannel ch) throws Exception {
                         ch.pipeline()
                                 .addLast(AbstractUdpListener.this.buildDecoder(AbstractUdpListener.this.sessionManager))
-                                .addLast(new PacketHandler(AbstractUdpListener.this.protocol, AbstractUdpListener.this.dispatcher))
+                                // TODO: fooker: Implement.
+//                                .addLast(new PacketHandler(AbstractUdpListener.this.protocol, AbstractUdpListener.this.dispatcher))
                                 .addLast(new ChannelInboundHandlerAdapter() {
                                     @Override
                                     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
@@ -173,7 +176,7 @@ public abstract class AbstractUdpListener implements Listener {
     }
 
     @Override
-    public void setDispatcher(final AsyncDispatcher<TelemetryMessage> dispatcher) {
-        this.dispatcher = dispatcher;
+    public void setParsers(final Set<Parser> parsers) {
+        this.parsers = parsers;
     }
 }

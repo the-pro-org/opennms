@@ -30,86 +30,60 @@ package org.opennms.netmgt.telemetry.config.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * RRD parameters
- */
-@XmlRootElement(name="rrd")
+import com.google.common.base.MoreObjects;
+
+@XmlRootElement(name = "telemetryd-config")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Rrd implements org.opennms.netmgt.telemetry.config.api.Rrd {
+public class TelemetrydConfig {
+    @XmlElement(name="listener")
+    private List<ListenerConfig> listeners = new ArrayList<>();
 
-    private static final String DEFAULT_BASE_DIRECTORY = Paths.get(System.getProperty("opennms.home"),"share","rrd","snmp").toString();
+    @XmlElement(name="queue")
+    private List<QueueConfig> queues = new ArrayList<>();
 
-    /**
-     * Step size for the RRD, in seconds.
-     */
-    @XmlAttribute(name="step")
-    private Integer step;
-
-    /**
-     * Round Robin Archive definitions
-     */
-    @XmlElement(name="rra")
-    private List<String> rras = new ArrayList<>();
-
-    @XmlAttribute(name="base-directory")
-    private String baseDir;
-
-    public Integer getStep() {
-        return step;
+    public List<ListenerConfig> getListeners() {
+        return this.listeners;
     }
 
-    public void setStep(Integer step) {
-        this.step = step;
+    public void setListeners(final List<ListenerConfig> listeners) {
+        this.listeners = listeners;
     }
 
-    public List<String> getRras() {
-        return rras;
+    public List<QueueConfig> getQueues() {
+        return this.queues;
     }
 
-    public void setRras(List<String> rras) {
-        this.rras = rras;
-    }
-
-    public String getBaseDir() {
-        if (baseDir == null) {
-            return DEFAULT_BASE_DIRECTORY;
-        }
-        return baseDir;
-    }
-
-    public void setBaseDir(String baseDir) {
-        this.baseDir = baseDir;
+    public void setQueues(final List<QueueConfig> queues) {
+        this.queues = queues;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Rrd rrd = (Rrd) o;
-        return Objects.equals(step, rrd.step) &&
-                Objects.equals(rras, rrd.rras) &&
-                Objects.equals(baseDir, rrd.baseDir);
+
+        final TelemetrydConfig that = (TelemetrydConfig) o;
+
+        return Objects.equals(this.listeners, that.listeners) &&
+                Objects.equals(this.queues, that.queues);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(step, rras, baseDir);
+        return Objects.hash(this.listeners,this.queues);
     }
 
     @Override
     public String toString() {
-        return "Rrd{" +
-                "step=" + step +
-                ", rras=" + rras +
-                ", baseDir=" + baseDir +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("listeners", this.listeners)
+                .add("queues", this.queues)
+                .toString();
     }
 }

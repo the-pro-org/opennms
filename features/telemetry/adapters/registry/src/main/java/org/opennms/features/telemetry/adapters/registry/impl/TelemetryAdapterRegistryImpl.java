@@ -35,10 +35,10 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 
 import org.opennms.core.soa.lookup.ServiceLookupBuilder;
+import org.opennms.netmgt.telemetry.adapters.api.Adapter;
 import org.opennms.netmgt.telemetry.adapters.api.AdapterFactory;
 import org.opennms.features.telemetry.adapters.registry.api.TelemetryAdapterRegistry;
-import org.opennms.netmgt.telemetry.adapters.api.Adapter;
-import org.opennms.netmgt.telemetry.config.api.Protocol;
+import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,8 +102,8 @@ public class TelemetryAdapterRegistryImpl implements TelemetryAdapterRegistry {
     }
 
     @Override
-    public Adapter getAdapter(String className, Protocol protocol, Map<String, String> properties) {
-        AdapterFactoryRegistration registration = m_adapterFactoryByClassName.get(className);
+    public Adapter getAdapter(final AdapterDefinition adapterConfig) {
+        AdapterFactoryRegistration registration = m_adapterFactoryByClassName.get(adapterConfig.getClassName());
 
         final long waitUntil = System.currentTimeMillis() + ServiceLookupBuilder.WAIT_PERIOD_MS;
         // If the adapter is not currently available, wait until the JVM has been up for at least GRACE_PERIOD_MS
@@ -118,12 +118,12 @@ public class TelemetryAdapterRegistryImpl implements TelemetryAdapterRegistry {
                 LOG.error("Interrupted while waiting for adapter factory to become available in the service registry. Aborting.");
                 return null;
             }
-            registration = m_adapterFactoryByClassName.get(className);
+            registration = m_adapterFactoryByClassName.get(adapterConfig.getClassName());
         }
 
-        Adapter adapter = null;
+        org.opennms.netmgt.telemetry.adapters.api.Adapter adapter = null;
         if (registration != null) {
-            adapter = registration.getAdapterFactory().createAdapter(protocol, properties);
+            adapter = registration.getAdapterFactory().createAdapter(adapterConfig);
             if (registration.shouldAutowire()) {
                 // Autowire!
                 final AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();

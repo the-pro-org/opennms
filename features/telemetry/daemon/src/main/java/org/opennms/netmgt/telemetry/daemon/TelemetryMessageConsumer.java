@@ -28,8 +28,6 @@
 
 package org.opennms.netmgt.telemetry.daemon;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -40,7 +38,7 @@ import org.opennms.core.ipc.sink.api.SinkModule;
 import org.opennms.core.logging.Logging;
 import org.opennms.features.telemetry.adapters.registry.api.TelemetryAdapterRegistry;
 import org.opennms.netmgt.telemetry.adapters.api.Adapter;
-import org.opennms.netmgt.telemetry.config.model.Protocol;
+import org.opennms.netmgt.telemetry.config.model.AdapterConfig;
 import org.opennms.netmgt.telemetry.ipc.TelemetryProtos;
 import org.opennms.netmgt.telemetry.ipc.TelemetrySinkModule;
 import org.opennms.netmgt.telemetry.listeners.api.TelemetryMessage;
@@ -55,31 +53,27 @@ public class TelemetryMessageConsumer implements MessageConsumer<TelemetryMessag
     @Autowired
     private TelemetryAdapterRegistry adapterRegistry;
 
-    private final Protocol protocolDef;
+    private final AdapterConfig adapterConfig;
     private final TelemetrySinkModule sinkModule;
-    private final List<Adapter> adapters;
 
-    public TelemetryMessageConsumer(Protocol protocol, TelemetrySinkModule sinkModule) throws Exception {
-        this.protocolDef = Objects.requireNonNull(protocol);
+    private Adapter adapter;
+
+    public TelemetryMessageConsumer(final AdapterConfig adapterConfig, final TelemetrySinkModule sinkModule) throws Exception {
+        this.adapterConfig = Objects.requireNonNull(adapterConfig);
         this.sinkModule = Objects.requireNonNull(sinkModule);
-        adapters = new ArrayList<>(protocol.getAdapters().size());
     }
 
     @PostConstruct
     public void init() throws Exception {
-        // Pre-emptively instantiate the adapters
-        for (org.opennms.netmgt.telemetry.config.model.Adapter adapterDef : protocolDef.getAdapters()) {
-            final Adapter adapter;
-            try {
-                adapter = adapterRegistry.getAdapter(adapterDef.getClassName(), protocolDef, adapterDef.getParameterMap());
-            } catch (Exception e) {
-                throw new Exception("Failed to create adapter from definition: " + adapterDef, e);
-            }
+        // Preemptive instantiate the adapters
+        try {
+            this.adapter = adapterRegistry.getAdapter(this.adapterConfig);
+        } catch (Exception e) {
+            throw new Exception("Failed to create adapter from definition: " + this.adapterConfig, e);
+        }
 
-            if (adapter == null) {
-                throw new Exception("No adapter found for class: " + adapterDef.getClassName());
-            }
-            adapters.add(adapter);
+        if (this.adapter == null) {
+            throw new Exception("No adapter found for class: " + this.adapterConfig.getClassName());
         }
     }
 
@@ -88,20 +82,17 @@ public class TelemetryMessageConsumer implements MessageConsumer<TelemetryMessag
         try (Logging.MDCCloseable mdc = Logging.withPrefixCloseable(Telemetryd.LOG_PREFIX)) {
             LOG.trace("Received message log: {}", messageLog);
             // Handle the message with all of the adapters
-            for (Adapter adapter : adapters) {
-                try {
-                    adapter.handleMessageLog(messageLog);
-                } catch (RuntimeException e) {
-                    LOG.warn("Adapter: {} failed to handle message log: {}. Skipping.", adapter, messageLog, e);
-                    continue;
-                }
+            try {
+                this.adapter.handleMessageLog(messageLog);
+            } catch (RuntimeException e) {
+                LOG.warn("Adapter: {} failed to handle message log: {}.", adapter, messageLog, e);
             }
         }
     }
 
     @PreDestroy
     public void destroy() {
-        adapters.forEach((adapter) -> adapter.destroy());
+        this.adapter.destroy();
     }
 
     @Override
@@ -109,7 +100,7 @@ public class TelemetryMessageConsumer implements MessageConsumer<TelemetryMessag
         return sinkModule;
     }
 
-    public Protocol getProtocol() {
-        return protocolDef;
+    public AdapterConfig getAdapterConfig() {
+        return this.adapterConfig;
     }
 }

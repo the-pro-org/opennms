@@ -28,15 +28,12 @@
 
 package org.opennms.netmgt.telemetry.adapters.api;
 
-import java.util.Map;
-
-import org.opennms.netmgt.telemetry.adapters.api.Adapter;
-import org.opennms.netmgt.telemetry.config.api.Protocol;
+import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
 
 public interface AdapterFactory {
 
 	Class<? extends Adapter> getAdapterClass();
 
-	Adapter createAdapter(Protocol protocol, Map<String, String> properties);
+	Adapter createAdapter(AdapterDefinition adapterConfig);
 
 }

@@ -28,17 +28,14 @@
 
 package org.opennms.netmgt.telemetry.config.api;
 
-import java.util.List;
+import java.util.Map;
 
-/**
- * RRD related settings for a given telemetry protocol package.
- */
-public interface Rrd {
+public interface ListenerDefinition {
 
-    Integer getStep();
+    String getName();
 
-    List<String> getRras();
+    String getClassName();
 
-    String getBaseDir();
+    Map<String, String> getParameterMap();
 
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xmlns.opennms.org/xsd/config/telemetryd-config" elementFormDefault="qualified" targetNamespace="http://xmlns.opennms.org/xsd/config/telemetryd-config" version="1.0">
 
+  <xs:element name="queue" type="tns:queue"/>
+
   <xs:element name="adapter" type="tns:adapter"/>
 
   <xs:element name="filter" type="tns:filter"/>
@@ -38,11 +40,9 @@
   </xs:complexType>
 
   <xs:complexType name="parser">
-    <xs:sequence>
-      <xs:element name="adapter" maxOccurs="unbounded" minOccurs="0" type="xs:IDREF"/>
-    </xs:sequence>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="class-name" type="xs:string"/>
+    <xs:attribute name="queue" type="xs:IDREF"/>
     <xs:attribute name="enabled" type="xs:boolean"/>
   </xs:complexType>
 
@@ -72,10 +72,17 @@
     <xs:attribute name="enabled" type="xs:boolean"/>
   </xs:complexType>
 
+  <xs:complexType name="queue">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:adapter"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:ID"/>
+  </xs:complexType>
+
   <xs:complexType name="telemetrydConfiguration">
     <xs:choice maxOccurs="unbounded" minOccurs="0" >
       <xs:element ref="tns:listener"/>
-      <xs:element ref="tns:adapter"/>
+      <xs:element ref="tns:queue"/>
     </xs:choice>
   </xs:complexType>
 </xs:schema>

@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +39,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
+
 import com.google.common.base.MoreObjects;
 
 @XmlRootElement(name="adapter")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Adapter {
+public class AdapterConfig implements AdapterDefinition {
     @XmlAttribute(name="name")
-    @XmlID
     private String name;
 
     @XmlAttribute(name="class-name")
@@ -59,8 +59,9 @@ public class Adapter {
     private List<Parameter> parameters = new ArrayList<>();
 
     @XmlElement(name="package")
-    private List<Package> packages = new ArrayList<>();
+    private List<PackageConfig> packages = new ArrayList<>();
 
+    @Override
     public String getName() {
         return this.name;
     }
@@ -69,6 +70,7 @@ public class Adapter {
         this.name = name;
     }
 
+    @Override
     public String getClassName() {
         return this.className;
     }
@@ -93,16 +95,18 @@ public class Adapter {
         this.parameters = parameters;
     }
 
+    @Override
     public Map<String, String> getParameterMap() {
         return parameters.stream()
                 .collect(Collectors.toMap(Parameter::getKey, Parameter::getValue));
     }
 
-    public List<Package> getPackages() {
+    @Override
+    public List<PackageConfig> getPackages() {
         return this.packages;
     }
 
-    public void setPackages(final List<Package> packages) {
+    public void setPackages(final List<PackageConfig> packages) {
         this.packages = packages;
     }
 
@@ -110,7 +114,7 @@ public class Adapter {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Adapter that = (Adapter) o;
+        final AdapterConfig that = (AdapterConfig) o;
         return Objects.equals(this.name, that.name) &&
                 Objects.equals(this.className, that.className) &&
                 Objects.equals(this.enabled, that.enabled) &&

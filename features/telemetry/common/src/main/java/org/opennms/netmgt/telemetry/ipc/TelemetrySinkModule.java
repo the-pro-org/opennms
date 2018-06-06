@@ -34,7 +34,7 @@ import org.opennms.core.ipc.sink.api.AggregationPolicy;
 import org.opennms.core.ipc.sink.api.AsyncPolicy;
 import org.opennms.core.ipc.sink.api.SinkModule;
 import org.opennms.netmgt.dao.api.DistPollerDao;
-import org.opennms.netmgt.telemetry.config.api.Protocol;
+import org.opennms.netmgt.telemetry.config.api.QueueDefinition;
 import org.opennms.netmgt.telemetry.listeners.api.TelemetryMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -51,13 +51,13 @@ public class TelemetrySinkModule implements SinkModule<TelemetryMessage, Telemet
     @Autowired
     private DistPollerDao distPollerDao;
 
-    private final Protocol protocol;
+    private final QueueDefinition queueConfig;
 
     private final String moduleId;
 
-    public TelemetrySinkModule(Protocol protocol) {
-        this.protocol = Objects.requireNonNull(protocol);
-        this.moduleId = MODULE_ID_PREFIX + protocol.getName();
+    public TelemetrySinkModule(final QueueDefinition queueConfig) {
+        this.queueConfig = Objects.requireNonNull(queueConfig);
+        this.moduleId = MODULE_ID_PREFIX + this.queueConfig.getName();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TelemetrySinkModule implements SinkModule<TelemetryMessage, Telemet
 
     @Override
     public int getNumConsumerThreads() {
-        return protocol.getNumThreads().orElse(DEFAULT_NUM_THREADS);
+        return queueConfig.getNumThreads().orElse(DEFAULT_NUM_THREADS);
     }
 
     @Override
@@ -91,12 +91,12 @@ public class TelemetrySinkModule implements SinkModule<TelemetryMessage, Telemet
         return new AggregationPolicy<TelemetryMessage, TelemetryProtos.TelemetryMessageLog, TelemetryProtos.TelemetryMessageLog.Builder>() {
             @Override
             public int getCompletionSize() {
-                return protocol.getBatchSize().orElse(DEFAULT_BATCH_SIZE);
+                return TelemetrySinkModule.this.queueConfig.getBatchSize().orElse(DEFAULT_BATCH_SIZE);
             }
 
             @Override
             public int getCompletionIntervalMs() {
-                return protocol.getBatchIntervalMs().orElse(DEFAULT_BATCH_INTERVAL_MS);
+                return TelemetrySinkModule.this.queueConfig.getBatchIntervalMs().orElse(DEFAULT_BATCH_INTERVAL_MS);
             }
 
             @Override
@@ -134,12 +134,12 @@ public class TelemetrySinkModule implements SinkModule<TelemetryMessage, Telemet
         return new AsyncPolicy() {
             @Override
             public int getQueueSize() {
-                return protocol.getQueueSize().orElse(DEFAULT_QUEUE_SIZE);
+                return TelemetrySinkModule.this.queueConfig.getQueueSize().orElse(DEFAULT_QUEUE_SIZE);
             }
 
             @Override
             public int getNumThreads() {
-                return protocol.getNumThreads().orElse(DEFAULT_NUM_THREADS);
+                return TelemetrySinkModule.this.queueConfig.getNumThreads().orElse(DEFAULT_NUM_THREADS);
             }
 
             @Override

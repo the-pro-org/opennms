@@ -28,24 +28,26 @@
 
 package org.opennms.netmgt.telemetry.config.model;
 
-import org.opennms.netmgt.telemetry.listeners.api.ListenerDefinition;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.opennms.netmgt.telemetry.config.api.ParserDefinition;
+
 import com.google.common.base.MoreObjects;
 
-@XmlRootElement(name="listener")
+@XmlRootElement(name="parser")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Listener implements ListenerDefinition {
+public class ParserConfig implements ParserDefinition {
 
     @XmlAttribute(name="name")
     private String name;
@@ -53,14 +55,15 @@ public class Listener implements ListenerDefinition {
     @XmlAttribute(name="class-name")
     private String className;
 
+    @XmlAttribute(name="queue")
+    @XmlIDREF()
+    private QueueConfig queue;
+
     @XmlAttribute(name="enabled")
     private boolean enabled;
 
     @XmlElement(name="parameter")
     private List<Parameter> parameters = new ArrayList<>();
-
-    @XmlElement(name="parser")
-    private List<Parser> parsers = new ArrayList<>();
 
     public String getName() {
         return this.name;
@@ -76,6 +79,14 @@ public class Listener implements ListenerDefinition {
 
     public void setClassName(final String className) {
         this.className = className;
+    }
+
+    public QueueConfig getQueue() {
+        return this.queue;
+    }
+
+    public void setQueue(final QueueConfig queue) {
+        this.queue = queue;
     }
 
     public boolean isEnabled() {
@@ -94,14 +105,6 @@ public class Listener implements ListenerDefinition {
         this.parameters = parameters;
     }
 
-    public List<Parser> getParsers() {
-        return this.parsers;
-    }
-
-    public void setParsers(final List<Parser> parsers) {
-        this.parsers = parsers;
-    }
-
     @Override
     public Map<String, String> getParameterMap() {
         return parameters.stream()
@@ -112,16 +115,17 @@ public class Listener implements ListenerDefinition {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Listener that = (Listener) o;
+        final ParserConfig that = (ParserConfig) o;
         return Objects.equals(this.name, that.name) &&
                 Objects.equals(this.className, that.className) &&
+                Objects.equals(this.queue, that.queue) &&
                 Objects.equals(this.enabled, that.enabled) &&
                 Objects.equals(this.parameters, that.parameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.name, this.className, this.enabled, this.parameters);
+        return Objects.hash(this.name, this.className, this.queue, this.enabled, this.parameters);
     }
 
     @Override
@@ -129,8 +133,9 @@ public class Listener implements ListenerDefinition {
         return MoreObjects.toStringHelper(this)
                 .add("name", this.name)
                 .add("class-name", this.className)
+                .add("queue", this.queue)
                 .add("enabled", this.enabled)
-                .addValue(this.parameters)
+                .add("parameters", this.parameters)
                 .toString();
     }
 }

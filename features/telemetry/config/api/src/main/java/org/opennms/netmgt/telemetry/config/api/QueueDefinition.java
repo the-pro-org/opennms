@@ -28,24 +28,52 @@
 
 package org.opennms.netmgt.telemetry.config.api;
 
+import java.util.Optional;
+
 /**
- * Telemetry protocol package configuration.
+ * Telemetry protocol configuration.
  */
-public interface Package {
+public interface QueueDefinition {
 
     /**
-     * The filter rule is used to match which sources should belong to this package.
+     * The name of the protocol.
      *
-     * If the rule is <code>null</code>, then all sources should match.
+     * This is used as a suffix for any associated queues that are created and
+     * must be the same on both OpenNMS and Minion.
      *
-     * @return the fitler rule
+     * @return the protocol name
      */
-    String getFilterRule();
+    String getName();
 
     /**
-     * The RRD settings are use to control the control of RRD files, when applicable.
+     * Number of threads used for consuming/dispatching messages.
      *
-     * @return the rrd settings
+     * @return the number of threads
      */
-    Rrd getRrd();
+    Optional<Integer> getNumThreads();
+
+    /**
+     * Messages are aggregated in batches before being dispatched.
+     * When the batch reaches this size, it will be dispatched.
+     *
+     * @return the batch size
+     */
+    Optional<Integer> getBatchSize();
+
+    /**
+     * Messages are aggregated in batches before being dispatched.
+     * When the batch has been created for longer than this interval (ms)
+     * it will be dispatched, regardless of the current size.
+     *
+     * @return the batch interval
+     */
+    Optional<Integer> getBatchIntervalMs();
+
+    /**
+     * Maximum number of messages to keep in memory while waiting
+     * to be dispatched.
+     *
+     * @return the queue size
+     */
+    Optional<Integer> getQueueSize();
 }

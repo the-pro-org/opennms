@@ -29,8 +29,10 @@
 package org.opennms.netmgt.telemetry.listeners.sflow;
 
 import java.net.InetSocketAddress;
+import java.util.Set;
 
 import org.opennms.core.ipc.sink.api.AsyncDispatcher;
+import org.opennms.netmgt.telemetry.listeners.api.Parser;
 import org.opennms.netmgt.telemetry.listeners.api.TelemetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +59,7 @@ public class Listener implements org.opennms.netmgt.telemetry.listeners.api.List
     private String host = null;
     private int port = 6343;
 
-    private AsyncDispatcher<TelemetryMessage> dispatcher;
+    private Set<Parser> parsers;
 
     private EventLoopGroup bossGroup;
     private ChannelFuture socketFuture;
@@ -85,7 +87,8 @@ public class Listener implements org.opennms.netmgt.telemetry.listeners.api.List
                     protected void initChannel(final DatagramChannel ch) throws Exception {
                         ch.pipeline()
                                 .addLast(new PacketDecoder())
-                                .addLast(new PacketHandler(Listener.this.dispatcher))
+                                // TODO: fooker: Implement.
+//                                .addLast(new PacketHandler(Listener.this.dispatcher))
                                 .addLast(new ChannelInboundHandlerAdapter() {
                                     @Override
                                     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
@@ -142,7 +145,7 @@ public class Listener implements org.opennms.netmgt.telemetry.listeners.api.List
     }
 
     @Override
-    public void setDispatcher(final AsyncDispatcher<TelemetryMessage> dispatcher) {
-        this.dispatcher = dispatcher;
+    public void setParsers(final Set<Parser> parsers) {
+        this.parsers = parsers;
     }
 }

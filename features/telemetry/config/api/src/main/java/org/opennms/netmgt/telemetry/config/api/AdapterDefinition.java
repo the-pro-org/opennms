@@ -26,16 +26,34 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.telemetry.listeners.api;
+package org.opennms.netmgt.telemetry.config.api;
 
+import java.util.List;
 import java.util.Map;
 
-public interface ListenerDefinition {
+/**
+ * Telemetry protocol configuration.
+ */
+public interface AdapterDefinition {
 
+    /**
+     * The name of the protocol.
+     *
+     * This is used as a suffix for any associated queues that are created and
+     * must be the same on both OpenNMS and Minion.
+     *
+     * @return the protocol name
+     */
     String getName();
 
     String getClassName();
 
-    Map<String, String> getParameterMap();
+    /**
+     * Packages may contain settings for specific sources.
+     *
+     * @return the list of configured packages
+     */
+    List<? extends PackageDefinition> getPackages();
 
+    Map<String, String> getParameterMap();
 }

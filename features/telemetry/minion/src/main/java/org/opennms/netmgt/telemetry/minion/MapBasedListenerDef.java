@@ -28,7 +28,7 @@
 
 package org.opennms.netmgt.telemetry.minion;
 
-import org.opennms.netmgt.telemetry.listeners.api.ListenerDefinition;
+import org.opennms.netmgt.telemetry.config.api.ListenerDefinition;
 
 import java.util.Map;
 

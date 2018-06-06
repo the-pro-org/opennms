@@ -31,10 +31,12 @@ package org.opennms.netmgt.telemetry.listeners.udp;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.opennms.core.ipc.sink.api.AsyncDispatcher;
 import org.opennms.netmgt.telemetry.listeners.api.Listener;
+import org.opennms.netmgt.telemetry.listeners.api.Parser;
 import org.opennms.netmgt.telemetry.listeners.api.TelemetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +60,9 @@ import io.netty.util.internal.SocketUtils;
 public class UdpListener implements Listener {
     private static final Logger LOG = LoggerFactory.getLogger(UdpListener.class);
 
-    private AsyncDispatcher<TelemetryMessage> dispatcher;
+//    private AsyncDispatcher<TelemetryMessage> dispatcher;
+    private Set<Parser> parsers;
+
     private String name;
     private EventLoopGroup bossGroup;
     private ChannelFuture future;
@@ -92,11 +96,13 @@ public class UdpListener implements Listener {
                                 final ByteBuffer buffer = wrapContentsWithNioByteBuffer(packet);
                                 // Build the message to dispatch via the Sink API
                                 final TelemetryMessage msg = new TelemetryMessage(packet.sender(), buffer);
+
                                 // Dispatch and retain a reference to the packet
                                 // in the case that we are sharing the underlying byte array
-                                final CompletableFuture<TelemetryMessage> future = dispatcher.send(msg);
-                                packet.retain();
-                                future.whenComplete((res,ex) -> packet.release());
+                                // TODO: fooker: dispatch to parsers
+//                                final CompletableFuture<TelemetryMessage> future = dispatcher.send(msg);
+//                                packet.retain();
+//                                future.whenComplete((res,ex) -> packet.release());
                             }
                         });
                     }
@@ -141,9 +147,14 @@ public class UdpListener implements Listener {
         return name;
     }
 
+//    @Override
+//    public void setDispatcher(AsyncDispatcher<TelemetryMessage> dispatcher) {
+//        this.dispatcher = dispatcher;
+//    }
+
     @Override
-    public void setDispatcher(AsyncDispatcher<TelemetryMessage> dispatcher) {
-        this.dispatcher = dispatcher;
+    public void setParsers(final Set<Parser> parsers) {
+        this.parsers = parsers;
     }
 
     @Override

@@ -34,42 +34,46 @@ import org.opennms.core.test.xml.XmlTestNoCastor;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class TelemetrydConfigTest extends XmlTestNoCastor<TelemetrydConfiguration> {
-    public TelemetrydConfigTest(TelemetrydConfiguration sampleObject, Object sampleXml) {
+public class TelemetrydConfigTest extends XmlTestNoCastor<TelemetrydConfig> {
+    public TelemetrydConfigTest(TelemetrydConfig sampleObject, Object sampleXml) {
         super(sampleObject, sampleXml, "src/main/resources/xsds/telemetryd-config.xsd");
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        TelemetrydConfiguration telemetrydConfig = new TelemetrydConfiguration();
+        TelemetrydConfig telemetrydConfig = new TelemetrydConfig();
 
-        Listener udpListener = new Listener();
+        ListenerConfig udpListener = new ListenerConfig();
         udpListener.setName("JTI-UDP-50000");
         udpListener.setClassName("org.opennms.netmgt.collection.streaming.udp.UdpListener");
         udpListener.setEnabled(true);
         udpListener.getParameters().add(new Parameter("port", "50000"));
         telemetrydConfig.getListeners().add(udpListener);
 
-        Parser jtiParser = new Parser();
+        ParserConfig jtiParser = new ParserConfig();
         jtiParser.setName("JTI");
         jtiParser.setClassName("org.opennms.netmgt.collection.streaming.jti.JtiParser");
         jtiParser.setEnabled(false);
         udpListener.getParsers().add(jtiParser);
 
-        Adapter jtiGbpAdapter = new Adapter();
+        QueueConfig jtiQueue = new QueueConfig();
+        jtiQueue.setName("jti");
+        telemetrydConfig.getQueues().add(jtiQueue);
+        jtiParser.setQueue(jtiQueue);
+
+        AdapterConfig jtiGbpAdapter = new AdapterConfig();
         jtiGbpAdapter.setName("JTI-GPB");
         jtiGbpAdapter.setClassName("org.opennms.netmgt.collection.streaming.jti.JtiGpbAdapter");
         jtiGbpAdapter.getParameters().add(new Parameter("script", "${install.dir}/etc/telemetryd-adapters/junos-telemetry-interface.groovy"));
         jtiGbpAdapter.setEnabled(true);
-        telemetrydConfig.getAdapters().add(jtiGbpAdapter);
-        jtiParser.getAdapters().add(jtiGbpAdapter);
+        jtiQueue.getAdapters().add(jtiGbpAdapter);
 
-        Package jtiDefaultPkg = new Package();
+        PackageConfig jtiDefaultPkg = new PackageConfig();
         jtiDefaultPkg.setName("JTI-Default");
-        jtiDefaultPkg.setFilter(new Filter("IPADDR != '0.0.0.0'"));
+        jtiDefaultPkg.setFilter(new PackageConfig.Filter("IPADDR != '0.0.0.0'"));
         jtiGbpAdapter.getPackages().add(jtiDefaultPkg);
 
-        Rrd rrd = new Rrd();
+        PackageConfig.Rrd rrd = new PackageConfig.Rrd();
         rrd.setStep(300);
         rrd.getRras().add("RRA:AVERAGE:0.5:1:2016");
         rrd.getRras().add("RRA:AVERAGE:0.5:12:1488");
@@ -83,24 +87,24 @@ public class TelemetrydConfigTest extends XmlTestNoCastor<TelemetrydConfiguratio
                 "<telemetryd-config>\n" +
                 "  <listener name=\"JTI-UDP-50000\" class-name=\"org.opennms.netmgt.collection.streaming.udp.UdpListener\" enabled=\"true\">\n" +
                 "    <parameter key=\"port\" value=\"50000\"/>\n" +
-                "    <parser name=\"JTI\" class-name=\"org.opennms.netmgt.collection.streaming.jti.JtiParser\" enabled=\"false\">\n" +
-                "      <adapter>JTI-GPB</adapter>\n" +
-                "    </parser>\n" +
+                "    <parser name=\"JTI\" class-name=\"org.opennms.netmgt.collection.streaming.jti.JtiParser\" queue=\"jti\" enabled=\"false\" />\n" +
                 "  </listener>\n" +
                 "  \n" +
-                "  <adapter name=\"JTI-GPB\" class-name=\"org.opennms.netmgt.collection.streaming.jti.JtiGpbAdapter\" enabled=\"true\">\n" +
-                "    <parameter key=\"script\" value=\"${install.dir}/etc/telemetryd-adapters/junos-telemetry-interface.groovy\" />\n" +
-                "    <package name=\"JTI-Default\">\n" +
-                "      <filter>IPADDR != '0.0.0.0'</filter>\n" +
-                "      <rrd step=\"300\">\n" +
-                "        <rra>RRA:AVERAGE:0.5:1:2016</rra>\n" +
-                "        <rra>RRA:AVERAGE:0.5:12:1488</rra>\n" +
-                "        <rra>RRA:AVERAGE:0.5:288:366</rra>\n" +
-                "        <rra>RRA:MAX:0.5:288:366</rra>\n" +
-                "        <rra>RRA:MIN:0.5:288:366</rra>\n" +
-                "      </rrd>\n" +
-                "    </package>\n" +
-                "  </adapter>\n" +
+                "  <queue name=\"jti\">\n" +
+                "    <adapter name=\"JTI-GPB\" class-name=\"org.opennms.netmgt.collection.streaming.jti.JtiGpbAdapter\" enabled=\"true\">\n" +
+                "      <parameter key=\"script\" value=\"${install.dir}/etc/telemetryd-adapters/junos-telemetry-interface.groovy\" />\n" +
+                "      <package name=\"JTI-Default\">\n" +
+                "        <filter>IPADDR != '0.0.0.0'</filter>\n" +
+                "        <rrd step=\"300\">\n" +
+                "          <rra>RRA:AVERAGE:0.5:1:2016</rra>\n" +
+                "          <rra>RRA:AVERAGE:0.5:12:1488</rra>\n" +
+                "          <rra>RRA:AVERAGE:0.5:288:366</rra>\n" +
+                "          <rra>RRA:MAX:0.5:288:366</rra>\n" +
+                "          <rra>RRA:MIN:0.5:288:366</rra>\n" +
+                "        </rrd>\n" +
+                "      </package>\n" +
+                "    </adapter>\n" +
+                "  </queue>\n" +
                 "</telemetryd-config>"
                 } });
     }

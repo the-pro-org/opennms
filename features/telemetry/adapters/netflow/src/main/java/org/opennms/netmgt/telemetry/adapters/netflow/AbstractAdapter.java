@@ -37,10 +37,9 @@ import org.opennms.netmgt.flows.api.Flow;
 import org.opennms.netmgt.flows.api.FlowException;
 import org.opennms.netmgt.flows.api.FlowRepository;
 import org.opennms.netmgt.flows.api.FlowSource;
-import org.opennms.netmgt.telemetry.adapters.api.Adapter;
 import org.opennms.netmgt.telemetry.adapters.api.TelemetryMessage;
 import org.opennms.netmgt.telemetry.adapters.api.TelemetryMessageLog;
-import org.opennms.netmgt.telemetry.config.api.Protocol;
+import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,7 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
-public abstract class AbstractAdapter<P> implements Adapter {
+public abstract class AbstractAdapter<P> implements org.opennms.netmgt.telemetry.adapters.api.Adapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractAdapter.class);
 
@@ -77,7 +76,7 @@ public abstract class AbstractAdapter<P> implements Adapter {
     }
 
     @Override
-    public void setProtocol(Protocol protocol) {
+    public void setConfig(AdapterDefinition protocol) {
         // we do not need the protocol
     }
 

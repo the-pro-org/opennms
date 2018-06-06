@@ -26,47 +26,51 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.telemetry.utils;
+package org.opennms.netmgt.telemetry.listeners.api;
 
 import java.lang.reflect.Constructor;
+import java.util.Set;
 
-import org.opennms.core.ipc.sink.api.AsyncDispatcher;
-import org.opennms.netmgt.telemetry.listeners.api.Listener;
-import org.opennms.netmgt.telemetry.listeners.api.ListenerDefinition;
-import org.opennms.netmgt.telemetry.listeners.api.TelemetryMessage;
+import org.opennms.netmgt.telemetry.config.api.ListenerDefinition;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 
 public class ListenerFactory {
 
-    public static Listener buildListener(ListenerDefinition listenerDef, AsyncDispatcher<TelemetryMessage> dispatcher) throws Exception {
+    public static Listener buildListener(final ListenerDefinition listenerDef,
+                                         final Set<Parser> parsers) {
         // Instantiate the associated class
-        final Object listenerInstance;
+        final Constructor<? extends Listener> ctor;
         try {
-            final Class<?> clazz = Class.forName(listenerDef.getClassName());
-            final Constructor<?> ctor = clazz.getConstructor();
-            listenerInstance = ctor.newInstance();
-        } catch (Exception e) {
+            ctor = Class.forName(listenerDef.getClassName())
+                    .asSubclass(Listener.class)
+                    .getConstructor();
+        } catch (final ClassNotFoundException | NoSuchMethodException e) {
+            throw new IllegalArgumentException(String.format("%s not found",
+                    listenerDef.getClassName()));
+        } catch (final ClassCastException e) {
+            throw new IllegalArgumentException(String.format("%s must implement %s",
+                    listenerDef.getClassName(),
+                    Listener.class.getCanonicalName()));
+        }
+
+        final Listener listener;
+        try {
+            listener = ctor.newInstance();
+        } catch (final Exception e) {
             throw new RuntimeException(String.format("Failed to instantiate listener with class name '%s'.",
                     listenerDef.getClassName()), e);
         }
-
-        // Cast
-        if (!(listenerInstance instanceof Listener)) {
-            throw new IllegalArgumentException(String.format("%s must implement %s", listenerDef.getClassName(), Listener.class.getCanonicalName()));
-        }
-        final Listener listener = (Listener)listenerInstance;
 
         // Apply the parameters
         final BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(listener);
         wrapper.setPropertyValues(listenerDef.getParameterMap());
 
-        // Update the name
-        // The one given in the definition wins over any that may be set by the parameters
+        // Update the name - the one given in the definition wins over any that may be set by the parameters
         listener.setName(listenerDef.getName());
 
-        // Use the given dispatcher
-        listener.setDispatcher(dispatcher);
+        // Use the given parsers
+        listener.setParsers(parsers);
 
         return listener;
     }

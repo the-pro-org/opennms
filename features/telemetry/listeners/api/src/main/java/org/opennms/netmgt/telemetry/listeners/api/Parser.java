@@ -26,38 +26,26 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.telemetry.adapters.api;
+package org.opennms.netmgt.telemetry.listeners.api;
 
-import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
+import org.opennms.core.ipc.sink.api.AsyncDispatcher;
 
 /**
- * Responsible for handling telemetry messages received by the listeners
- * within a adapter definition.
+ * Interface used by the daemon to manage parsers.
  *
- * The adapter should decode the message and handle the contents appropriately.
+ * When messages are received, they should be forwarded to the given {@link AsyncDispatcher}.
  *
  * @author jwhite
  */
-public interface Adapter {
+public interface Parser {
 
-    /**
-     * A single instance of an adapter will only be responsible
-     * for one config. The config will be set using this method before
-     * any calls to {@link #handleMessageLog} are made.
-     *
-     * @param adapterConfig the config in which the adapter is defined
-     */
-    void setConfig(AdapterDefinition adapterConfig);
+    void setName(String name);
 
-    /**
-     * Handle the messages.
-     *
-     * IMPORTANT: Implementations of this method MUST be thread-safe.
-     *
-     * @param messageLog group of messages to be handled
-     */
-    void handleMessageLog(TelemetryMessageLog messageLog);
+    String getName();
 
-    void destroy();
+    void setDispatcher(AsyncDispatcher<TelemetryMessage> dispatcher);
 
+    void start() throws InterruptedException;
+
+    void stop() throws InterruptedException;
 }

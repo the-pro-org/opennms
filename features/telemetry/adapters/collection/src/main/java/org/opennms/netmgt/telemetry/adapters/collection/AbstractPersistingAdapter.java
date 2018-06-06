@@ -50,11 +50,10 @@ import org.opennms.netmgt.collection.api.PersisterFactory;
 import org.opennms.netmgt.collection.api.ServiceParameters;
 import org.opennms.netmgt.filter.api.FilterDao;
 import org.opennms.netmgt.rrd.RrdRepository;
-import org.opennms.netmgt.telemetry.adapters.api.Adapter;
 import org.opennms.netmgt.telemetry.adapters.api.TelemetryMessage;
 import org.opennms.netmgt.telemetry.adapters.api.TelemetryMessageLog;
-import org.opennms.netmgt.telemetry.config.api.Package;
-import org.opennms.netmgt.telemetry.config.api.Protocol;
+import org.opennms.netmgt.telemetry.config.api.PackageDefinition;
+import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-public abstract class AbstractPersistingAdapter implements Adapter {
+public abstract class AbstractPersistingAdapter implements org.opennms.netmgt.telemetry.adapters.api.Adapter {
     private final Logger LOG = LoggerFactory.getLogger(AbstractPersistingAdapter.class);
 
     private static final ServiceParameters EMPTY_SERVICE_PARAMETERS = new ServiceParameters(Collections.emptyMap());
@@ -76,7 +75,7 @@ public abstract class AbstractPersistingAdapter implements Adapter {
     @Autowired
     private PersisterFactory persisterFactory;
 
-    private Protocol protocol;
+    private AdapterDefinition adapterConfig;
 
     private FileUpdateWatcher scriptUpdateWatcher;
 
@@ -122,15 +121,15 @@ public abstract class AbstractPersistingAdapter implements Adapter {
      */
     private Map<ScriptedCollectionSetBuilder, Boolean> scriptUpdateMap = new ConcurrentHashMap<>();
 
-    private final LoadingCache<CacheKey, Optional<Package>> cache = CacheBuilder.newBuilder()
+    private final LoadingCache<CacheKey, Optional<PackageDefinition>> cache = CacheBuilder.newBuilder()
             .maximumSize(Long.getLong("org.opennms.features.telemetry.cache.ipAddressFilter.maximumSize", 1000))
             .expireAfterWrite(
                     Long.getLong("org.opennms.features.telemetry.cache.ipAddressFilter.expireAfterWrite", 120),
                     TimeUnit.SECONDS)
-            .build(new CacheLoader<CacheKey, Optional<Package>>() {
+            .build(new CacheLoader<CacheKey, Optional<PackageDefinition>>() {
                 @Override
-                public Optional<Package> load(CacheKey key) {
-                    for (Package pkg : protocol.getPackages()) {
+                public Optional<PackageDefinition> load(CacheKey key) {
+                    for (PackageDefinition pkg : adapterConfig.getPackages()) {
                         final String filterRule = pkg.getFilterRule();
                         if (filterRule == null) {
                             // No filter specified, always match
@@ -169,7 +168,7 @@ public abstract class AbstractPersistingAdapter implements Adapter {
         for (TelemetryMessage message : messageLog.getMessageList()) {
             handleMessage(message, messageLog).forEach(result -> {
                 // Locate the matching package definition
-                final Package pkg = getPackageFor(protocol, result.getAgent());
+                final PackageDefinition pkg = getPackageFor(adapterConfig, result.getAgent());
                 if (pkg == null) {
                     LOG.warn("No matching package found for message: {}. Dropping.", message);
                     return;
@@ -192,13 +191,13 @@ public abstract class AbstractPersistingAdapter implements Adapter {
     }
 
     @Override
-    public void setProtocol(Protocol protocol) {
-        this.protocol = protocol;
+    public void setConfig(AdapterDefinition adapterConfig) {
+        this.adapterConfig = adapterConfig;
     }
 
-    private Package getPackageFor(Protocol protocol, CollectionAgent agent) {
+    private PackageDefinition getPackageFor(AdapterDefinition protocol, CollectionAgent agent) {
         try {
-            Optional<Package> value = cache.get(new CacheKey(protocol.getName(), agent.getHostAddress()));
+            Optional<PackageDefinition> value = cache.get(new CacheKey(protocol.getName(), agent.getHostAddress()));
             return value.orElse(null);
         } catch (ExecutionException e) {
             LOG.error("Error while retrieving package from Cache: {}.", e.getMessage(), e);

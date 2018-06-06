@@ -26,38 +26,26 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.telemetry.adapters.api;
-
-import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
+package org.opennms.netmgt.telemetry.config.api;
 
 /**
- * Responsible for handling telemetry messages received by the listeners
- * within a adapter definition.
- *
- * The adapter should decode the message and handle the contents appropriately.
- *
- * @author jwhite
+ * Telemetry protocol package configuration.
  */
-public interface Adapter {
+public interface PackageDefinition {
 
     /**
-     * A single instance of an adapter will only be responsible
-     * for one config. The config will be set using this method before
-     * any calls to {@link #handleMessageLog} are made.
+     * The filter rule is used to match which sources should belong to this package.
      *
-     * @param adapterConfig the config in which the adapter is defined
+     * If the rule is <code>null</code>, then all sources should match.
+     *
+     * @return the fitler rule
      */
-    void setConfig(AdapterDefinition adapterConfig);
+    String getFilterRule();
 
     /**
-     * Handle the messages.
+     * The RRD settings are use to control the control of RRD files, when applicable.
      *
-     * IMPORTANT: Implementations of this method MUST be thread-safe.
-     *
-     * @param messageLog group of messages to be handled
+     * @return the rrd settings
      */
-    void handleMessageLog(TelemetryMessageLog messageLog);
-
-    void destroy();
-
+    RrdDefinition getRrd();
 }

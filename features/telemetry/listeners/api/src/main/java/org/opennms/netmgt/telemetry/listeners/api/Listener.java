@@ -28,12 +28,12 @@
 
 package org.opennms.netmgt.telemetry.listeners.api;
 
-import org.opennms.core.ipc.sink.api.AsyncDispatcher;
+import java.util.Set;
 
 /**
  * Interface used by the daemon to manage listeners.
  *
- * When messages are received, they should be forwarded to the given {@link AsyncDispatcher}.
+ * When messages are received, they should be forwarded to the given {@link Parser}s.
  *
  * @author jwhite
  */
@@ -43,7 +43,7 @@ public interface Listener {
 
     String getName();
 
-    void setDispatcher(AsyncDispatcher<TelemetryMessage> dispatcher);
+    void setParsers(Set<Parser> parsers);
 
     void start() throws InterruptedException;
 

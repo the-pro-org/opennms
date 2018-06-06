@@ -28,13 +28,12 @@
 
 package org.opennms.netmgt.telemetry.adapters.netflow.v9;
 
-import java.util.Map;
 import java.util.Objects;
 
 import org.opennms.netmgt.flows.api.FlowRepository;
 import org.opennms.netmgt.telemetry.adapters.api.Adapter;
 import org.opennms.netmgt.telemetry.adapters.api.AdapterFactory;
-import org.opennms.netmgt.telemetry.config.api.Protocol;
+import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
 
 import com.codahale.metrics.MetricRegistry;
 
@@ -48,7 +47,7 @@ public class Netflow9AdapterFactory implements AdapterFactory {
     }
 
     @Override
-    public Adapter createAdapter(Protocol protocol, Map<String, String> properties) {
+    public Adapter createAdapter(final AdapterDefinition adapterConfig) {
         Objects.requireNonNull(metricRegistry);
         Objects.requireNonNull(flowRepository);
 
