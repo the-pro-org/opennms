@@ -38,12 +38,27 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.opennms.features.telemetry.protocols</groupId>
+      <artifactId>org.opennms.features.telemetry.protocols.flows</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opennms.features.telemetry.protocols</groupId>
+      <artifactId>org.opennms.features.telemetry.protocols.collection</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
     </dependency>
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>bson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

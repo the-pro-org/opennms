@@ -45,5 +45,9 @@
       <artifactId>spring-dependencies</artifactId>
       <type>pom</type>
     </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>bson</artifactId>
+    </dependency>
   </dependencies>
 </project>

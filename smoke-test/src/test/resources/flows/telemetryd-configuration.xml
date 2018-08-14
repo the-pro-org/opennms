@@ -11,7 +11,7 @@
     </protocol>
 
     <protocol name="Netflow-9" description="Listener for Netflow 9 UDP packets" enabled="true">
-        <listener name="Netflow-9-UDP-50001" class-name="org.opennms.netmgt.telemetry.listeners.flow.netflow9.UdpListener">
+        <listener name="Netflow-9-UDP-50001" class-name="org.opennms.netmgt.telemetry.listeners.flow.parser.netflow9.UdpListener">
             <parameter key="port" value="50001"/>
             <parameter key="host" value="0.0.0.0"/>
         </listener>
@@ -21,7 +21,7 @@
     </protocol>
 
     <protocol name="IPFIX" description="Listener for IPFIX UDP packets" enabled="true">
-        <listener name="IPFIX-UDP-50002" class-name="org.opennms.netmgt.telemetry.listeners.flow.ipfix.UdpListener">
+        <listener name="IPFIX-UDP-50002" class-name="org.opennms.netmgt.telemetry.listeners.flow.parser.ipfix.UdpListener">
             <parameter key="port" value="50002"/>
             <parameter key="host" value="0.0.0.0"/>
         </listener>
