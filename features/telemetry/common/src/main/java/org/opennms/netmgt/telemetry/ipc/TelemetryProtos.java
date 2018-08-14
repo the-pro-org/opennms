@@ -66,7 +66,7 @@ public final class TelemetryProtos {
   public static final class TelemetryMessage extends
       com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:TelemetryMessage)
-      TelemetryMessageOrBuilder, org.opennms.netmgt.telemetry.adapters.api.TelemetryMessage {
+      TelemetryMessageOrBuilder, org.opennms.netmgt.telemetry.api.TelemetryMessage {
     // Use TelemetryMessage.newBuilder() to construct.
     private TelemetryMessage(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -622,7 +622,7 @@ public final class TelemetryProtos {
   public static final class TelemetryMessageLog extends
       com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:TelemetryMessageLog)
-      TelemetryMessageLogOrBuilder, Message, org.opennms.netmgt.telemetry.adapters.api.TelemetryMessageLog {
+      TelemetryMessageLogOrBuilder, Message, org.opennms.netmgt.telemetry.api.TelemetryMessageLog {
     // Use TelemetryMessageLog.newBuilder() to construct.
     private TelemetryMessageLog(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);

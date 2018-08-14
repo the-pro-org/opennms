@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>org.opennms.features.telemetry</groupId>
-      <artifactId>org.opennms.features.telemetry.common</artifactId>
+      <artifactId>org.opennms.features.telemetry.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -39,19 +39,24 @@
     </dependency>
     <dependency>
       <groupId>org.opennms.features.telemetry.listeners</groupId>
-      <artifactId>org.opennms.features.telemetry.listeners.udp</artifactId>
+      <artifactId>org.opennms.features.telemetry.listeners.simple</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opennms.features.telemetry.listeners</groupId>
-      <artifactId>org.opennms.features.telemetry.listeners.flow</artifactId>
+      <artifactId>org.opennms.features.telemetry.listeners.smart</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opennms.features.telemetry.listeners</groupId>
-      <artifactId>org.opennms.features.telemetry.listeners.sflow</artifactId>
+      <groupId>org.opennms.features.telemetry.protocols</groupId>
+      <artifactId>org.opennms.features.telemetry.protocols.common</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.opennms.features.telemetry.listeners</groupId>-->
+      <!--<artifactId>org.opennms.features.telemetry.protocols.</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>

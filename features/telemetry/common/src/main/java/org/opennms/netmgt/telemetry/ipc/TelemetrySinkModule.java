@@ -35,7 +35,7 @@ import org.opennms.core.ipc.sink.api.AsyncPolicy;
 import org.opennms.core.ipc.sink.api.SinkModule;
 import org.opennms.netmgt.dao.api.DistPollerDao;
 import org.opennms.netmgt.telemetry.config.api.QueueDefinition;
-import org.opennms.netmgt.telemetry.listeners.api.TelemetryMessage;
+import org.opennms.netmgt.telemetry.protocols.common.TelemetryMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;

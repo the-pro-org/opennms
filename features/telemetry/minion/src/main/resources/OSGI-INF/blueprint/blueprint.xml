@@ -14,7 +14,7 @@
     <reference id="distPollerDao" interface="org.opennms.netmgt.dao.api.DistPollerDao"/>
     <reference id="messageDispatcherFactory" interface="org.opennms.core.ipc.sink.api.MessageDispatcherFactory" />
 
-    <bean id="listenerManager" class="org.opennms.netmgt.telemetry.minion.ListenerManager" init-method="init" destroy-method="destroy">
+    <bean id="listenerManager" class="org.opennms.netmgt.telemetry.minion.ConfigManager" init-method="init" destroy-method="destroy">
         <property name="distPollerDao" ref="distPollerDao"/>
         <property name="messageDispatcherFactory" ref="messageDispatcherFactory" />
     </bean>

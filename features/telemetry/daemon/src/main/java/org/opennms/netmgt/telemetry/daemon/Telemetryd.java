@@ -34,7 +34,6 @@ import org.opennms.core.ipc.sink.api.MessageDispatcherFactory;
 import org.opennms.netmgt.telemetry.config.dao.TelemetrydConfigDao;
 import org.opennms.netmgt.telemetry.config.model.AdapterConfig;
 import org.opennms.netmgt.telemetry.config.model.ListenerConfig;
-import org.opennms.netmgt.telemetry.config.model.ParserConfig;
 import org.opennms.netmgt.telemetry.config.model.QueueConfig;
 import org.opennms.netmgt.telemetry.config.model.TelemetrydConfig;
 import org.opennms.netmgt.telemetry.ipc.TelemetrySinkModule;
@@ -43,12 +42,12 @@ import org.opennms.netmgt.daemon.SpringServiceDaemon;
 import org.opennms.netmgt.events.api.EventConstants;
 import org.opennms.netmgt.events.api.annotations.EventHandler;
 import org.opennms.netmgt.events.api.annotations.EventListener;
-import org.opennms.netmgt.telemetry.adapters.api.Adapter;
-import org.opennms.netmgt.telemetry.listeners.api.Listener;
-import org.opennms.netmgt.telemetry.listeners.api.Parser;
-import org.opennms.netmgt.telemetry.listeners.api.ParserFactory;
-import org.opennms.netmgt.telemetry.listeners.api.TelemetryMessage;
-import org.opennms.netmgt.telemetry.listeners.api.ListenerFactory;
+import org.opennms.netmgt.telemetry.api.Adapter;
+import org.opennms.netmgt.telemetry.api.Listener;
+import org.opennms.netmgt.telemetry.api.Parser;
+import org.opennms.netmgt.telemetry.api.ParserFactory;
+import org.opennms.netmgt.telemetry.protocols.common.TelemetryMessage;
+import org.opennms.netmgt.telemetry.api.ListenerFactory;
 import org.opennms.netmgt.xml.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +135,7 @@ public class Telemetryd implements SpringServiceDaemon {
             final Set<Parser> parsers = listenerConfig.getParsers().stream()
                     .map(parserConfig -> {
                         final AsyncDispatcher<TelemetryMessage> dispatcher = this.dispatchers.get(parserConfig.getQueue());
-                        return ParserFactory.buildParser(parserConfig, dispatcher);
+                        return (Parser)null; // FIXME: was ParserFactory.buildParser(parserConfig, dispatcher);
                     })
                     .collect(Collectors.toSet());
 

@@ -127,7 +127,7 @@ import org.opennms.netmgt.config.wmi.agent.WmiConfig;
 import org.opennms.netmgt.config.wsman.WsmanConfig;
 import org.opennms.netmgt.config.wsman.WsmanDatacollectionConfig;
 import org.opennms.netmgt.provision.persist.requisition.Requisition;
-import org.opennms.netmgt.telemetry.config.model.TelemetrydConfiguration;
+import org.opennms.netmgt.telemetry.config.model.TelemetrydConfig;
 import org.opennms.netmgt.xml.eventconf.Events;
 import org.opennms.plugins.elasticsearch.rest.credentials.ElasticCredentials;
 import org.springframework.core.io.ClassPathResource;
@@ -258,7 +258,7 @@ public class WillItUnmarshalIT {
         addFile(Source.CONFIG, "surveillance-views.xml", SurveillanceViewConfiguration.class, true, null);
         addFile(Source.CONFIG, "syslog-northbounder-configuration.xml", SyslogNorthbounderConfig.class, true, null);
         addFile(Source.CONFIG, "syslogd-configuration.xml", SyslogdConfiguration.class, false, null);
-        addFile(Source.CONFIG, "telemetryd-configuration.xml", TelemetrydConfiguration.class, false, null);
+        addFile(Source.CONFIG, "telemetryd-configuration.xml", TelemetrydConfig.class, false, null);
         addFile(Source.CONFIG, "threshd-configuration.xml", ThreshdConfiguration.class, true, null);
         addFile(Source.CONFIG, "thresholds.xml", ThresholdingConfig.class, true, null);
         addFile(Source.CONFIG, "tl1d-configuration.xml", Tl1dConfiguration.class, true, null);

@@ -54,18 +54,17 @@ import org.opennms.netmgt.dao.api.InterfaceToNodeCache;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.model.NetworkBuilder;
 import org.opennms.netmgt.model.OnmsNode;
-import org.opennms.netmgt.telemetry.adapters.jti.JtiGpbAdapter;
+import org.opennms.netmgt.telemetry.protocols.jti.JtiGpbAdapter;
 import org.opennms.netmgt.telemetry.config.dao.TelemetrydConfigDao;
 import org.opennms.netmgt.telemetry.config.model.AdapterConfig;
-import org.opennms.netmgt.telemetry.config.model.Filter;
 import org.opennms.netmgt.telemetry.config.model.ListenerConfig;
 import org.opennms.netmgt.telemetry.config.model.PackageConfig;
 import org.opennms.netmgt.telemetry.config.model.Parameter;
-import org.opennms.netmgt.telemetry.config.model.Protocol;
-import org.opennms.netmgt.telemetry.config.model.Rrd;
+import org.opennms.netmgt.telemetry.config.model.ParserConfig;
+import org.opennms.netmgt.telemetry.config.model.QueueConfig;
 import org.opennms.netmgt.telemetry.config.model.TelemetrydConfig;
 import org.opennms.netmgt.telemetry.daemon.Telemetryd;
-import org.opennms.netmgt.telemetry.listeners.udp.UdpListener;
+import org.opennms.netmgt.telemetry.listeners.simple.UdpListener;
 import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -162,33 +161,37 @@ public class JtiIT {
     private TelemetrydConfig getConfig(int port) {
         TelemetrydConfig telemetrydConfig = new TelemetrydConfig();
 
-        Protocol jtiProtocol = new Protocol();
-        jtiProtocol.setName("JTI");
-        jtiProtocol.setDescription("Junos Telemetry Interface (JTI)");
-        telemetrydConfig.getProtocols().add(jtiProtocol);
+        QueueConfig jtiQueue = new QueueConfig();
+        telemetrydConfig.getQueues().add(jtiQueue);
 
-        ListenerConfig udpListener = new ListenerConfig();
-        udpListener.setName("JTI-UDP-" + port);
-        udpListener.setClassName(UdpListener.class.getCanonicalName());
-        udpListener.getParameters().add(new Parameter("port", Integer.toString(port)));
-        jtiProtocol.getListeners().add(udpListener);
+        ListenerConfig jtiListener = new ListenerConfig();
+        jtiListener.setName("JTI");
+        jtiListener.setClassName(UdpListener.class.getCanonicalName());
+        jtiListener.getParameters().add(new Parameter("port", Integer.toString(port)));
+        telemetrydConfig.getListeners().add(jtiListener);
 
-        AdapterConfig jtiGbpAdapter = new AdapterConfig();
-        jtiGbpAdapter.setName("JTI-GBP");
-        jtiGbpAdapter.setClassName(JtiGpbAdapter.class.getCanonicalName());
+        ParserConfig jtiParser = new ParserConfig();
+        jtiParser.setName("JTI-UDP-" + port);
+        jtiParser.setClassName(UdpListener.class.getCanonicalName());
+        jtiParser.setQueue(jtiQueue);
+        jtiListener.getParsers().add(jtiParser);
 
         File script = Paths.get(System.getProperty("opennms.home"),
                 "etc", "telemetryd-adapters", "junos-telemetry-interface.groovy").toFile();
         assertTrue("Can't read: " + script.getAbsolutePath(), script.canRead());
+
+        AdapterConfig jtiGbpAdapter = new AdapterConfig();
+        jtiGbpAdapter.setName("JTI-GBP");
+        jtiGbpAdapter.setClassName(JtiGpbAdapter.class.getCanonicalName());
+        jtiQueue.getAdapters().add(jtiGbpAdapter);
         jtiGbpAdapter.getParameters().add(new Parameter("script", script.getAbsolutePath()));
-        jtiProtocol.getAdapters().add(jtiGbpAdapter);
 
         PackageConfig jtiDefaultPkg = new PackageConfig();
         jtiDefaultPkg.setName("JTI-Default");
-        jtiDefaultPkg.setFilter(new Filter("IPADDR != '0.0.0.0'"));
-        jtiProtocol.getPackages().add(jtiDefaultPkg);
+        jtiDefaultPkg.setFilter(new PackageConfig.Filter("IPADDR != '0.0.0.0'"));
+        jtiGbpAdapter.getPackages().add(jtiDefaultPkg);
 
-        Rrd rrd = new Rrd();
+        PackageConfig.Rrd rrd = new PackageConfig.Rrd();
         rrd.setStep(300);
         rrd.setBaseDir(rrdBaseDir.getAbsolutePath());
         rrd.getRras().add("RRA:AVERAGE:0.5:1:2016");

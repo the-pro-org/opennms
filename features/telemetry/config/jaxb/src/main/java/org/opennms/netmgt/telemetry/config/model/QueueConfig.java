@@ -51,13 +51,13 @@ public class QueueConfig implements QueueDefinition {
     @XmlID
     private String name;
 
-    @XmlAttribute(name="num-threads")
+    @XmlAttribute(name="threads")
     private Integer numThreads;
 
     @XmlAttribute(name="batch-size")
     private Integer batchSize;
 
-    @XmlAttribute(name="batch-interval-ms")
+    @XmlAttribute(name="batch-interval")
     private Integer batchIntervalMs;
 
     @XmlAttribute(name="queue-size")
