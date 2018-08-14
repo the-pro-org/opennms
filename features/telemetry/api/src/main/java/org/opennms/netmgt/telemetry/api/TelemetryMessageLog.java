@@ -40,6 +40,6 @@ public interface TelemetryMessageLog {
 
     String getSourceAddress();
 
-    List<? extends TelemetryMessage> getMessageList();
+    List<? extends TelemetryMessageLogEntry> getMessageList();
 
 }

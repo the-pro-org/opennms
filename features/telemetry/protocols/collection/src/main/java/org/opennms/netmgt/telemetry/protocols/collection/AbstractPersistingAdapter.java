@@ -50,7 +50,7 @@ import org.opennms.netmgt.collection.api.PersisterFactory;
 import org.opennms.netmgt.collection.api.ServiceParameters;
 import org.opennms.netmgt.filter.api.FilterDao;
 import org.opennms.netmgt.rrd.RrdRepository;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
+import org.opennms.netmgt.telemetry.api.TelemetryMessageLogEntry;
 import org.opennms.netmgt.telemetry.api.TelemetryMessageLog;
 import org.opennms.netmgt.telemetry.api.Adapter;
 import org.opennms.netmgt.telemetry.config.api.PackageDefinition;
@@ -162,11 +162,11 @@ public abstract class AbstractPersistingAdapter implements Adapter {
      * @throws Exception
      *             if an error occured while generating the collection set
      */
-    public abstract Stream<CollectionSetWithAgent> handleMessage(TelemetryMessage message, TelemetryMessageLog messageLog);
+    public abstract Stream<CollectionSetWithAgent> handleMessage(TelemetryMessageLogEntry message, TelemetryMessageLog messageLog);
 
     @Override
     public void handleMessageLog(TelemetryMessageLog messageLog) {
-        for (TelemetryMessage message : messageLog.getMessageList()) {
+        for (TelemetryMessageLogEntry message : messageLog.getMessageList()) {
             handleMessage(message, messageLog).forEach(result -> {
                 // Locate the matching package definition
                 final PackageDefinition pkg = getPackageFor(adapterConfig, result.getAgent());

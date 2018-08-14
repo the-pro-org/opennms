@@ -31,12 +31,8 @@ package org.opennms.netmgt.telemetry.protocols.flow.ipfix;
 import java.net.InetSocketAddress;
 import java.util.Set;
 
-import org.opennms.core.ipc.sink.api.AsyncDispatcher;
 import org.opennms.netmgt.telemetry.api.Listener;
 import org.opennms.netmgt.telemetry.api.Parser;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
-import org.opennms.netmgt.telemetry.protocols.flow.PacketHandler;
-import org.opennms.netmgt.telemetry.protocols.flow.Protocol;
 import org.opennms.netmgt.telemetry.protocols.flow.session.Session;
 import org.opennms.netmgt.telemetry.protocols.flow.session.TcpSession;
 import org.slf4j.Logger;

@@ -31,7 +31,7 @@ package org.opennms.netmgt.telemetry.protocols.netflow.v9;
 import org.bson.BsonDocument;
 import org.bson.RawBsonDocument;
 import org.opennms.netmgt.flows.api.FlowRepository;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
+import org.opennms.netmgt.telemetry.api.TelemetryMessageLogEntry;
 import org.opennms.netmgt.telemetry.protocols.netflow.AbstractAdapter;
 
 import com.codahale.metrics.MetricRegistry;
@@ -44,7 +44,7 @@ public class Netflow9Adapter extends AbstractAdapter<BsonDocument> {
     }
 
     @Override
-    protected BsonDocument parse(TelemetryMessage message) {
+    protected BsonDocument parse(TelemetryMessageLogEntry message) {
         return new RawBsonDocument(message.getByteArray());
     }
 }

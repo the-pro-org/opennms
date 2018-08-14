@@ -29,7 +29,7 @@
 package org.opennms.netmgt.telemetry.protocols.netflow.v5;
 
 import org.opennms.netmgt.flows.api.FlowRepository;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
+import org.opennms.netmgt.telemetry.api.TelemetryMessageLogEntry;
 import org.opennms.netmgt.telemetry.protocols.netflow.AbstractAdapter;
 import org.opennms.netmgt.telemetry.protocols.netflow.v5.proto.NetflowPacket;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class Netflow5Adapter extends AbstractAdapter<NetflowPacket> {
     }
 
     @Override
-    protected NetflowPacket parse(TelemetryMessage message) {
+    protected NetflowPacket parse(TelemetryMessageLogEntry message) {
         // Create NetflowPacket which delegates all calls to the byte array
         final NetflowPacket flowPacket = new NetflowPacket(message.getByteArray());
 

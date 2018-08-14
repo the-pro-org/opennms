@@ -46,7 +46,7 @@ import org.opennms.netmgt.collection.api.CollectionAgentFactory;
 import org.opennms.netmgt.collection.api.CollectionSet;
 import org.opennms.netmgt.dao.api.InterfaceToNodeCache;
 import org.opennms.netmgt.dao.api.NodeDao;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
+import org.opennms.netmgt.telemetry.api.TelemetryMessageLogEntry;
 import org.opennms.netmgt.telemetry.api.TelemetryMessageLog;
 import org.opennms.netmgt.telemetry.protocols.collection.AbstractScriptPersistingAdapter;
 import org.opennms.netmgt.telemetry.protocols.collection.CollectionSetWithAgent;
@@ -71,7 +71,7 @@ public class SFlowTelemetryAdapter extends AbstractScriptPersistingAdapter {
     }
 
     @Override
-    public Stream<CollectionSetWithAgent> handleMessage(final TelemetryMessage message,
+    public Stream<CollectionSetWithAgent> handleMessage(final TelemetryMessageLogEntry message,
                                                         final TelemetryMessageLog messageLog) {
         LOG.debug("Received {} telemetry messages", messageLog.getMessageList().size());
 

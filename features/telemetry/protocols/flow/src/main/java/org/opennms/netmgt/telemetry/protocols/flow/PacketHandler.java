@@ -38,7 +38,7 @@ import org.bson.BsonBinaryWriter;
 import org.bson.BsonWriter;
 import org.bson.io.BasicOutputBuffer;
 import org.opennms.core.ipc.sink.api.AsyncDispatcher;
-import org.opennms.netmgt.telemetry.protocols.common.TelemetryMessage;
+import org.opennms.netmgt.telemetry.api.TelemetryMessage;
 import org.opennms.netmgt.telemetry.protocols.flow.ie.RecordProvider;
 import org.opennms.netmgt.telemetry.protocols.flow.ie.Value;
 import org.opennms.netmgt.telemetry.protocols.flow.ie.values.BooleanValue;

@@ -37,7 +37,7 @@ import org.opennms.netmgt.flows.api.Flow;
 import org.opennms.netmgt.flows.api.FlowException;
 import org.opennms.netmgt.flows.api.FlowRepository;
 import org.opennms.netmgt.flows.api.FlowSource;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
+import org.opennms.netmgt.telemetry.api.TelemetryMessageLogEntry;
 import org.opennms.netmgt.telemetry.api.TelemetryMessageLog;
 import org.opennms.netmgt.telemetry.config.api.AdapterDefinition;
 import org.slf4j.Logger;
@@ -87,7 +87,7 @@ public abstract class AbstractAdapter<P> implements org.opennms.netmgt.telemetry
         final List<P> flowPackets = new LinkedList<>();
         final List<Flow> flows = new LinkedList<>();
         try (Timer.Context ctx = logParsingTimer.time()) {
-            for (TelemetryMessage eachMessage : messageLog.getMessageList()) {
+            for (TelemetryMessageLogEntry eachMessage : messageLog.getMessageList()) {
                 LOG.trace("Parsing packet: {}", eachMessage);
                 final P flowPacket = parse(eachMessage);
                 if (flowPacket != null) {
@@ -109,7 +109,7 @@ public abstract class AbstractAdapter<P> implements org.opennms.netmgt.telemetry
                 messageLog.getMessageList().size());
     }
 
-    protected abstract P parse(TelemetryMessage message);
+    protected abstract P parse(TelemetryMessageLogEntry message);
 
     public void destroy() {
         // not needed

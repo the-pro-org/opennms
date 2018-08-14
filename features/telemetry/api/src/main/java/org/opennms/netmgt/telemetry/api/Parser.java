@@ -41,6 +41,7 @@ import io.netty.channel.EventLoopGroup;
  */
 public interface Parser {
     void setName(final String name);
+
     void setDispatcher(final AsyncDispatcher<TelemetryMessage> dispatcher);
 
     void start(final EventLoopGroup eventLoopGroup);

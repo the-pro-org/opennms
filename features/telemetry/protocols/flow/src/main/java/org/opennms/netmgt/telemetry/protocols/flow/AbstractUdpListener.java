@@ -33,10 +33,8 @@ import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.opennms.core.ipc.sink.api.AsyncDispatcher;
 import org.opennms.netmgt.telemetry.api.Listener;
 import org.opennms.netmgt.telemetry.api.Parser;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
 import org.opennms.netmgt.telemetry.protocols.flow.session.UdpSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

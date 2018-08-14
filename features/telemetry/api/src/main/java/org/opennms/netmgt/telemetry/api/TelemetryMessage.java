@@ -28,15 +28,35 @@
 
 package org.opennms.netmgt.telemetry.api;
 
+import org.opennms.core.ipc.sink.api.Message;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.util.Date;
 
-import org.opennms.core.ipc.sink.api.Message;
+public class TelemetryMessage implements Message {
+    private final InetSocketAddress source;
+    private final ByteBuffer buffer;
+    private final Date receivedAt;
 
-public interface TelemetryMessage extends Message {
+    public TelemetryMessage(InetSocketAddress source, ByteBuffer buffer) {
+        this(source, buffer, new Date());
+    }
 
-    long getTimestamp();
+    public TelemetryMessage(InetSocketAddress source, ByteBuffer buffer, Date receivedAt) {
+        this.source = source;
+        this.buffer = buffer;
+        this.receivedAt = receivedAt;
+    }
 
-    byte[] getByteArray();
+    public InetSocketAddress getSource() {
+        return source;
+    }
 
+    public ByteBuffer getBuffer() {
+        return buffer;
+    }
+
+    public Date getReceivedAt() {
+        return receivedAt;
+    }
 }

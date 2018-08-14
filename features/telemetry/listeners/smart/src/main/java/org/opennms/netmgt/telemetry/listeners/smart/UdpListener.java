@@ -35,7 +35,6 @@ import java.util.Set;
 
 import org.opennms.netmgt.telemetry.api.Listener;
 import org.opennms.netmgt.telemetry.api.Parser;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

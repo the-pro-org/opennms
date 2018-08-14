@@ -31,9 +31,7 @@ package org.opennms.netmgt.telemetry.protocols.sflow;
 import java.net.InetSocketAddress;
 import java.util.Set;
 
-import org.opennms.core.ipc.sink.api.AsyncDispatcher;
 import org.opennms.netmgt.telemetry.api.Parser;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

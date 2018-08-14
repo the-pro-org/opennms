@@ -39,7 +39,7 @@ import org.opennms.netmgt.dao.api.InterfaceToNodeCache;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.model.OnmsIpInterface;
 import org.opennms.netmgt.model.OnmsNode;
-import org.opennms.netmgt.telemetry.api.TelemetryMessage;
+import org.opennms.netmgt.telemetry.api.TelemetryMessageLogEntry;
 import org.opennms.netmgt.telemetry.api.TelemetryMessageLog;
 import org.opennms.netmgt.telemetry.protocols.collection.AbstractScriptPersistingAdapter;
 import org.opennms.netmgt.telemetry.protocols.collection.CollectionSetWithAgent;
@@ -95,7 +95,7 @@ public class JtiGpbAdapter extends AbstractScriptPersistingAdapter {
     private TransactionOperations transactionTemplate;
 
     @Override
-    public Stream<CollectionSetWithAgent> handleMessage(TelemetryMessage message, TelemetryMessageLog messageLog) {
+    public Stream<CollectionSetWithAgent> handleMessage(TelemetryMessageLogEntry message, TelemetryMessageLog messageLog) {
         final TelemetryTop.TelemetryStream jtiMsg;
         try {
             jtiMsg = TelemetryTop.TelemetryStream.parseFrom(message.getByteArray(), s_registry);
