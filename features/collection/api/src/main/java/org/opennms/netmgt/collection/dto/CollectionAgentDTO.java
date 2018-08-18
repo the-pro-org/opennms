@@ -47,8 +47,13 @@ import org.opennms.netmgt.collection.api.CollectionAgent;
 import org.opennms.netmgt.model.ResourcePath;
 import org.opennms.netmgt.snmp.InetAddrUtils;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @XmlRootElement(name = "agent")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Data
+@NoArgsConstructor
 public class CollectionAgentDTO implements CollectionAgent {
 
     @XmlAttribute(name = "type")
@@ -77,7 +82,7 @@ public class CollectionAgentDTO implements CollectionAgent {
     private String foreignId;
 
     @XmlAttribute(name = "location")
-    private String location;
+    private String locationName;
 
     @XmlAttribute(name = "storage-resource-path")
     private String storageResourcePath;
@@ -86,9 +91,7 @@ public class CollectionAgentDTO implements CollectionAgent {
     private String sysObjectId;
 
     @XmlAttribute(name = "sys-up-time")
-    private long sysUpTime;
-
-    public CollectionAgentDTO() { }
+    private long savedSysUpTime;
 
     public CollectionAgentDTO(CollectionAgent agent) {
         Objects.requireNonNull(agent);
@@ -102,28 +105,10 @@ public class CollectionAgentDTO implements CollectionAgent {
         nodeLabel = agent.getNodeLabel();
         foreignSource = agent.getForeignSource();
         foreignId = agent.getForeignId();
-        location = agent.getLocationName();
+        locationName = agent.getLocationName();
         setStorageResourcePath(agent.getStorageResourcePath());
         sysObjectId = agent.getSysObjectId();
-        sysUpTime = agent.getSavedSysUpTime();
-    }
-
-    @Override
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    @Override
-    public InetAddress getAddress() {
-        return address;
-    }
-
-    public void setAddress(InetAddress address) {
-        this.address = address;
+        savedSysUpTime = agent.getSavedSysUpTime();
     }
 
     @Override
@@ -165,10 +150,6 @@ public class CollectionAgentDTO implements CollectionAgent {
         return storeByForeignSource;
     }
 
-    public void setStoreByForeignSource(Boolean storeByForeignSource) {
-        this.storeByForeignSource = storeByForeignSource;
-    }
-
     @Override
     public String getHostAddress() {
         return address != null ? InetAddrUtils.str(address) : null;
@@ -180,51 +161,6 @@ public class CollectionAgentDTO implements CollectionAgent {
     }
 
     @Override
-    public int getNodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(int nodeId) {
-        this.nodeId = nodeId;
-    }
-
-    @Override
-    public String getNodeLabel() {
-        return nodeLabel;
-    }
-
-    public void setNodeLabel(String nodeLabel) {
-        this.nodeLabel = nodeLabel;
-    }
-
-    @Override
-    public String getForeignSource() {
-        return foreignSource;
-    }
-
-    public void setForeignSource(String foreignSource) {
-        this.foreignSource = foreignSource;
-    }
-
-    @Override
-    public String getForeignId() {
-        return foreignId;
-    }
-
-    public void setForeignId(String foreignId) {
-        this.foreignId = foreignId;
-    }
-
-    @Override
-    public String getLocationName() {
-        return location;
-    }
-
-    public void setLocationName(String location) {
-        this.location = location;
-    }
-
-    @Override
     public ResourcePath getStorageResourcePath() {
         return storageResourcePath != null ? ResourcePath.fromString(storageResourcePath) : null;
     }
@@ -233,62 +169,4 @@ public class CollectionAgentDTO implements CollectionAgent {
         this.storageResourcePath = storageResourcePath != null ? ResourcePath.toString(storageResourcePath) : null;
     }
 
-    @Override
-    public String getSysObjectId() {
-        return sysObjectId;
-    }
-
-    public void setSysObjectId(String sysObjectId) {
-        this.sysObjectId = sysObjectId;
-    }
-
-    @Override
-    public long getSavedSysUpTime() {
-        return sysUpTime;
-    }
-
-    @Override
-    public void setSavedSysUpTime(long sysUpTime) {
-        this.sysUpTime = sysUpTime;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("CollectionAgentDTO[type=%d, attributes=%s, address=%s, storeByForeignSource=%s, "
-                + "nodeId=%d, nodeLabel=%s, foreignSource=%s, foreignId=%s, location=%s, storageDir=%s, "
-                + "sysObjectId=%s, sysUpTime=%d]",
-                type, attributes, address != null ? InetAddrUtils.str(address) : null, storeByForeignSource,
-                nodeId, nodeLabel, foreignSource, foreignId, location, storageResourcePath, sysObjectId, sysUpTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, attributes, address, storeByForeignSource,
-                nodeId, nodeLabel, foreignSource, foreignId, location,
-                storageResourcePath, sysObjectId, sysUpTime);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof CollectionAgentDTO)) {
-            return false;
-        }
-        CollectionAgentDTO other = (CollectionAgentDTO) obj;
-        return Objects.equals(this.type, other.type) &&
-                Objects.equals(this.attributes, other.attributes) &&
-                Objects.equals(this.address, other.address) &&
-                Objects.equals(this.storeByForeignSource, other.storeByForeignSource) &&
-                Objects.equals(this.nodeId, other.nodeId) &&
-                Objects.equals(this.nodeLabel, other.nodeLabel) &&
-                Objects.equals(this.foreignSource, other.foreignSource) &&
-                Objects.equals(this.foreignId, other.foreignId) &&
-                Objects.equals(this.location, other.location) &&
-                Objects.equals(this.storageResourcePath, other.storageResourcePath) &&
-                Objects.equals(this.sysObjectId, other.sysObjectId) &&
-                Objects.equals(this.sysUpTime, other.sysUpTime);
-    }
 }
